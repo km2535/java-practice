@@ -1,68 +1,59 @@
+# 스트림
+## 스트림이란?
+자료가 모여 있는 배열이나 컬렉션 또는 특정 범위 안에 있는일련의 숫자를 처리하는 기능이
+미리 구현되어 있다면 프로그램의 코드가 훨씬 간결해지고 일관성 있게 다룰 수 있습니다.
+이렇게 여러 자료의 처리에 대한 기능을 구현해 놓은 클래스가 스트림입니다. 
+스트림을 사용하면 배열, 컬렉션 등의 자료를 일관성 있게 처리할 수 있습니다.
+처리해야 할 자료구조가 무엇인지 간에 같은 방식으로 메서드를 호출 할 수 있기 때문에 
+자료를 추상화했다고 표현합니다.
 
-# 람다식
-함수형 프로그래밍의 여러 장점이 대두되어 자바8에서부터 지원
+## 스트림 연산
+스트림 연산의 종류에는 크게 중간 연산과 최종 연산 2가지가 있습니다. 
+중간 연산은 자료를 거르거나 변경하여 또 다른 자료로 내부적으로 생성하고 
+최종 연산은 생성된 내부 자료를 소모해 가면서 연산을 수행합니다.
+따라서 최종 연산은 마지막에 한 번만 호출됩니다.
 
-## 구현하기 
-람다식은 간단히 설명하면 함수 이름이 없는 익명 함수를 만드는 것입니다. 
+### 중간연산 - filter(), map()
 
-### 문법
-람다식 문법에서는 매개변수 자료형을 생략할 수 있습니다.
-```
-str -> {System.out.println(str);}
-```
-매개변수가 2개인 경우 괄호 생략 불가
-```
-(x,y) -> {System.out.println(x + y);}
-```
-중괄호는 구현 부분이 한 문장인 경우 생략 가능
-```
-(x,y) -> System.out.println(x + y);
-```
-return 문은 중괄호 생략 할 수 없음
-```
-str -> {return str.length();}
-```
-중괄호 안의 구현 부분이 return 문 하나라면 중괄호와 return 을 모두 생략하고 식만 씀
-```
-(x,y) -> x+y
-또는
-str -> str.length();
-```
-
-## 함수형 인터페이스
-람다식은 메서드 이름이 없고 메서드를 실행하는 데 필요한 매개변수와 매개변수를 활용한 실행 코드를 구현하는 것입니다.
-람다식을 구현하기 위해 함수형 인터페이스를 만들고 인터페이스에 람다식으로 구현할 메서드를 선언하는 것입니다.
-람다식은 하나의 메서드를 구현하여 인터페이스형 변수에 대입하므로 인터페이스가 두 개 이상의 메서드를 가져서는 안됩니다. 
+#### filter()
+filer 조건을 넣고 그 조건에 맞는 참인 경우만 추출하는 경우에 사용합니다.
 ```java
-
-public interface MyNumber {
-	int getMax(int num1, int num2);
-	// int getMin(int num1, int num2); 두개 이상 시 컴파일 에러
-}
+sList.stream().filter(s -> s.length() >= 5).forEach(s -> System.out.println(s));
+//filter : 중간연산 문자열 길이가 5 이상만 
+// forEach : 최종연산 중간연산 결과를 출력
 ```
-실수를 방지하기 위해 FunctionalInterface 어노테이션을 붙입니다.
+
+#### map()
+- 클래스가 가진 자료 중 이름만 출력하는 경우에 사용 
 ```java
-@FunctionalInterface
-public interface MyNumber {
-	int getMax(int num1, int num2);
-	// int getMin(int num1, int num2);
-}
-
+customerList.stream().map(c -> c.getName()).forEach(s -> System.out.println(s));
 ```
+
+### 최종 연산 - forEach(), count(), sum(), reduce()
+
+최종 연산을 사용하면 스트림은 더 이상 사용할 수 없습니다. 결과를 만드는 데 주로 사용합니다.
+
+## 스트림 사용하기
 ```java
-public class Test{
-	public static void main(String[] args){
-		int i = 100;
-		StringConcat concat2 = (s, v) ->{
-		    // i = 200; // 지역변수 변경 시 오류 발생
-			System.out.println(i);
-			System.out.println(s + " " + v);
-        };
-    }
-}
-```
-## 왜 오류가 발생할까?
-지역 내부 클래스와 마찬가지로 지역 변수는 메서드 호출이 끝나면 메모리에서 사라지기 때문에 익명 내부 클래스에서 사용하는 경우에는 
-지역 변수가 상수로 변하고 상수를 변경하려고 해서 오류가 발생하는 것 입니다.
+import java.util.Arrays;
 
+public class IntArrayTest {
+	public static void main(String[] args) {
+		int[] arr = {1,2,3,4,5,6,7,8,9};
+		int sumVal = Arrays.stream(arr).sum();
+		int count = (int)Arrays.stream(arr).count();
+
+		System.out.println(sumVal);
+		System.out.println(count);
+	}
+}
+
+```
+
+## 스트림의 특징
+- 자료의 대상과 관계없이 동일한 연산을 수행한다.
+- 한 번 생성하고 사용한 스트림은 재사용 할 수 없다.
+- 스트림의 연산은 기존 자료를 변경하지 않는다.
+- 스트림의 연산은 중간 연산과 최종 연산이 있다.
+- 
 
